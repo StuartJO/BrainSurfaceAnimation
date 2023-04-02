@@ -1,0 +1,21 @@
+
+Nparc = 100;
+
+parc_orig = parcellate_surface(fetal36_sphere_verts, Nparc);
+
+% Make the parcellation pretty
+
+% Order ROI IDs by their dorsal-ventral position.
+parc_z = zeros(Nparcs,1);
+
+for i = 1:Nparcs
+    parc_z(i) = min(sphere_verts(parc_orig==i,3));
+end
+newparcval = 1:Nparcs;
+[~,ordered_parc] = sort(parc_z);
+label = label_orig;
+for k = 1:numel(ordered_parc)
+    label(parc_orig == ordered_parc(k)) = newparcval(k);
+end
+
+ExampleAnimationFunc(fetal_verts,fetal_faces,'frames',5,'vertParc',l)
