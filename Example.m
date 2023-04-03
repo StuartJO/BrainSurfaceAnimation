@@ -40,5 +40,19 @@ SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',5,'vertParc',parc,'ve
 % Plot the brain with the colours of the parcellation and no border
 SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',5,'vertParc',parc,'vertData',1:N,'plotBoundary',false,'outgif','./outputs/GrowingBrain_parc.gif')
 
+% Plot the brain now with the borders of the parcellation and coloured by
+% sulcal depth at each timepoint;
+SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',5,'vertParc',parc,'vertData',fetal_sulc{16},'outgif','./outputs/GrowingBrain_border+sulcAll.gif')
+
+% Plot the brain now with the borders of the parcellation and coloured by
+% sulcal depth at each timepoint (color range is set to the min/max across 
+% all timepoint;
+SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',5,'vertParc',parc,'vertData',fetal_sulc,'outgif','./outputs/GrowingBrain_border+sulc36.gif')
+
+% Plot the brain now with the borders of the parcellation and coloured by
+% sulcal depth at each timepoint (color range is set to the min/max across 
+% all timepoint;
+SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',5,'vertParc',parc,'vertData',fetal_sulc,'varyClimits',true,'outgif','./outputs/GrowingBrain_border+sulcAll2.gif')
+
 % For fun, show the surface inflates to a sphere and back again
 SurfMorphAnimation({fetal_verts{16},fetal36_sphere_verts*.4,fetal_verts{16}},fetal_faces,'NInterpPoints',30,'vertParc',parc,'vertData',parc,'outgif','./outputs/Sphere_inflation.gif')

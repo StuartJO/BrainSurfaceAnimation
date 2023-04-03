@@ -109,6 +109,8 @@ validCmap = @(x) isnumeric(x) && size(x,2) == 3;
 validAngle = @(x) isnumeric(x) && size(x,1) == 1 && size(x,2) == 2;
 validCamlights = @(x) isnumeric(x) && size(x,2) == 2;
 
+validMatOrCell = @(x) (isnumeric(x) && ismatrix(x) && (size(x,1) == 1 || size(x,2) == 1)) || iscell(x);
+
 % Get the number of vertices in the first surface
 Nverts = size(verts{1},1);
 
@@ -133,7 +135,7 @@ addRequired(p,'faces',validFaces)
 addOptional(p,'plotBoundary',true,validLogical);
 addOptional(p,'boundaryWidth',2,validScalarPosNum);
 addOptional(p,'NInterpPoints',default_NInterpPoints,validScalarPosNum);
-addOptional(p,'vertData',default_vertData,validMatrix || validCell);
+addOptional(p,'vertData',default_vertData,validMatOrCell);
 addOptional(p,'vertParc',default_vertParc,validMatrix);
 addOptional(p,'colormap',default_Cmap,validCmap);
 addOptional(p,'viewAngle',default_viewAngle,validAngle);
@@ -141,9 +143,8 @@ addOptional(p,'outdir',[],@ischar);
 addOptional(p,'camlights',default_camlights,validCamlights);
 addOptional(p,'outgif',[],@ischar);
 addOptional(p,'gifoptions',default_gifoptions,@isstruct);
-addOptional(p,'clmits',[],validAngle);
+addOptional(p,'climits',[],validAngle);
 addOptional(p,'varyClimits',false,validLogical);
-varyClimits
 
 % Parse the inputs
 parse(p,verts,faces,varargin{:})
@@ -187,7 +188,7 @@ if iscell(p.Results.vertData)
         error('if ''vertData'' is a cell, it must be the same length as ''verts''')
     end
     % Get the climits
-    if ~isempty(p.Results.climits)        
+    if isempty(p.Results.climits) 
         climits_ = zeros(Ntimepoints,2);
         for i = 1:Ntimepoints
             climits_(i,:) = [nanmin(vertData{i}), nanmax(vertData{i})];
@@ -199,7 +200,7 @@ if iscell(p.Results.vertData)
     current_vertData = vertData{1};
     vary_vertData = true;
 else   
-    if ~isempty(p.Results.climits)
+    if isempty(p.Results.climits)
         climits = [nanmin(vertData), nanmax(vertData)];
     else
         climits = p.Results.climits;
@@ -207,6 +208,9 @@ else
     current_vertData = vertData;
     vary_vertData = false;
 end
+
+% Avoid climits having a nan in them
+climits(isnan(climits)) = 0;
 
 %% Actually make the animation
 
@@ -231,11 +235,13 @@ else
 end
 
 % Get the climits to use
-if varyClimits
-    current_climits = [min(current_vertData) max(current_vertData)];
+if p.Results.varyClimits
+    current_climits = [nanmin(current_vertData) nanmax(current_vertData)];
 else
     current_climits = climits;
 end
+
+current_climits(isnan(current_climits)) = 0;
 
 % If the boundary is not plotted or the vertex parcellation is uniform,
 % plot the surface without the boundary
@@ -328,15 +334,18 @@ for i = 1:length(verts)-1
         
         if vary_vertData
             
-            current_vertData = find_point_on_line(verts{i},verts{i+1},r(j+1));
-            if varyClimits
-                current_climits = [min(current_vertData) max(current_vertData)];
+            current_vertData = find_point_on_line(p.Results.vertData{i},p.Results.vertData{i+1},r(j+1));
+            if p.Results.varyClimits
+                current_climits = [nanmin(current_vertData) nanmax(current_vertData)];
             else
                 current_climits = climits;
             end
 
+            % Avoid cases of climits having a nan in them
+            current_climits(isnan(current_climits)) = 0;
+            
             FaceVertexCData = makeFaceVertexCData(newVerts,surface.faces,vertParc,current_vertData,p.Results.colormap,current_climits,0);
-            p.FaceVertexCData = FaceVertexCData;
+            surf_patch.FaceVertexCData = FaceVertexCData;
         
         end
         
