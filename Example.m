@@ -9,22 +9,22 @@ load('./data/example_fetal_data.mat')
 % Create a parcellation with N parcels
 N = 100;
 
-% % Parcellate the sphere using k-means clustering
-% parc_orig = parcellate_surface(fetal36_sphere_verts, N);
-% 
-% % Make the parcellation pretty
-% % Order ROI IDs by their dorsal-ventral position.
-% parc_z = zeros(N,1);
-% 
-% for i = 1:N
-%     parc_z(i) = min(fetal36_sphere_verts(parc_orig==i,3));
-% end
-% newparcval = 1:N;
-% [~,ordered_parc] = sort(parc_z);
-% parc = parc_orig;
-% for k = 1:numel(ordered_parc)
-%     parc(parc_orig == ordered_parc(k)) = newparcval(k);
-% end
+% Parcellate the sphere using k-means clustering
+parc_orig = parcellate_surface(fetal36_sphere_verts, N);
+
+% Make the parcellation pretty
+% Order ROI IDs by their dorsal-ventral position.
+parc_z = zeros(N,1);
+
+for i = 1:N
+    parc_z(i) = min(fetal36_sphere_verts(parc_orig==i,3));
+end
+newparcval = 1:N;
+[~,ordered_parc] = sort(parc_z);
+parc = parc_orig;
+for k = 1:numel(ordered_parc)
+    parc(parc_orig == ordered_parc(k)) = newparcval(k);
+end
 
 % Just plot the brain 'growing' with no parcellation/data on it
 figure
