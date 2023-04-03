@@ -81,8 +81,24 @@ SurfMorphAnimation({fetal_verts{16},fetal36_sphere_verts*.4,fetal_verts{16}},fet
 %R = randperm(size(fetal36_sphere_verts,1),5);
 % Some random points I liked
 R = [20666       17077        8436        1663       23780];
-dist2randpoints = pdist2(fetal36_sphere_verts(R,:),fetal36_sphere_verts);
 
+% To make it look like colours ripple across the surface, we just give the
+% surface some 'sinks' (i.e., points to converge on), and calculate the
+% distance to them. To make it look like bands of colour are moving across
+% the brain, we essentilly assign a vertex two values
+% ('vert_dist2randpoints' and 'vert_dist2randpoints2') and double up the
+% colourmap. The colourmap is set up so this looping will work (notice the
+% first value is not repeated). As the interpolation occurs for the vertex
+% data, the values of the vertex will be assigned a new colour, and because
+% of the way the colormap is orders, the colours will ripple on the surface
+
+For it to loop, we need each vertex to get back to its
+% original colour. So what we can do is add a duplicate of the colormap to
+% itself (in this case we quadruple it to avoid it looking too fat), and
+% then we rescale the vert_dist2randpoints to a set of new values. This
+% essentially means each vert_dist2randpoints is mapped 
+% 
+dist2randpoints = pdist2(fetal36_sphere_verts(R,:),fetal36_sphere_verts);
 vert_dist2randpoints = rescale(min(dist2randpoints),1,100);
 vert_dist2randpoints2 = vert_dist2randpoints+100;
 
@@ -96,5 +112,7 @@ trippy_cmap = [99,45,143;...
     0,125,254]./255;
 
 figure
-SurfMorphAnimation({fetal_verts{16},fetal_verts{16}},fetal_faces,'NInterpPoints',60,'vertParc',parc,'vertData',{vert_dist2randpoints,vert_dist2randpoints2},...
+SurfMorphAnimation({fetal_verts{16},fetal_verts{16}},fetal_faces,'NInterpPoints',120,'vertParc',parc,'vertData',{vert_dist2randpoints,vert_dist2randpoints2},...
 'colormap',[trippy_cmap;trippy_cmap;trippy_cmap;trippy_cmap],'outgif','./outputs/psychedelic_brain.gif','saveLastFrame',false)
+
+close all

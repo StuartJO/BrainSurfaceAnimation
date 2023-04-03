@@ -8,11 +8,16 @@ The script makes use of plotSurfaceROIBoundary, another toolbox I wrote. I have 
 
 The example data was obtained from https://gin.g-node.org/kcl_cdb/dhcp_fetal_brain_surface_atlas
 
+## What you need for this code to work
+
+In the simplist case, you just need closed surfaces with vertex correspondance (like say, a mesh of the brains cortex you get from freesurfer ie., white, pial, inflated, sphere; or surfaces of different brains where have been aligned using something like [MSM](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/MSM]). If you have a vector of the ROI ID for each vertex and/or data for each ROI/vertex, further functionality/fun is capable of being done.
+
 ## Things this code can do
 
 So many pointless things!
 
 To start with we can just animate the brain growing from 21 weeks gestational age to 36 weeks
+
 ![](/outputs/GrowingBrain.gif)
 
 We can also plot the borders of a parcellaiton on this growing brain!
@@ -47,11 +52,23 @@ For more fun, we can show the surface inflation to a sphere and back again, whil
 
 ![](outputs/Sphere_inflation_vartCmap_sulc_parc.gif)
 
+Finally, we can have a rave on the brain
+
+![](/outputs/psychedelic_brain.gif)
+
 ## To gif or not to gif, that is the question
 
 To save the output, the code gives two options: directly save to a .gif file and/or save each frame as a .png. Why these two options? The .gif option is easier and will give you an animation you can use right out of the box. However, I have personally found that the way MATLAB makes gifs is less than ideal and can result in poor quality. I found external gif making tools (like Photoscape X or https://ezgif.com/maker) could give better results, and can give you a lot more control (for example, you can vary the timing of individual frames which can be very useful). To use these external tools, you need to provide the frames to use (i.e., the .png files, also not you can import a .gif made from MATLAB into the to fiddle with setting but you run the risk of further compression artefacts occuring then). The other benefit of .png files is you can import them into your video maker of choice (e.g., Windows video Editor, Hitfilm Express) and make a video out of them. This will preserve the quality of each frame a lot better than simply making a gif. 
 
 The choice is yours.
+
+## This this cannot do
+
+The main one is it cannot morph between the boundaries of parcellations (it can do it if you only want to use the colours, if you are ok with it looking a little strange). It is conceptually the same as morphing the vertices/vertex data/colormap, I just didn't get around to doing it because it is a very niche thing to try to do (and making the morphing animations is *already* a very niche thing to do). Perhaps one day...
+
+## Contact
+
+If you have issues/problem/just want to ask why the hell I made this, email me at stuart.oldham@mcri.edu.au
 
 ## Licensing
 
