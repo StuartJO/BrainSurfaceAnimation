@@ -1,6 +1,10 @@
 # BrainSurfaceAnimation
 
-After years of the number one question being asked at any of my talks being "hoW dO yoU dO tHOsE anIMAtiOns?!??", this is how, this is the answer. My secrets are now yours, so you have no more excuses for boring static PowerPoints :)
+After years of the number one question being asked at any of my talks being "hoW dO yoU dO tHOsE anIMAtiOns?!??". 
+
+This is how.
+
+This is the answer. My secrets are now yours, so you have no more excuses for boring static PowerPoints :)
 
 This will show how to make an animation of a brain surface mesh morphing in MATLAB. You can morph the vertex positions, the values of each vertex, and/or the colormap being used.
 
@@ -57,6 +61,8 @@ For more fun, we can show the surface inflation to a sphere and back again, whil
 Finally, we can have a rave on the brain
 
 ![](/outputs/psychedelic_brain.gif)
+
+The parcellation that I used for these plots can be found in Parc4plots.mat
 
 ## To gif or not to gif, that is the question
 
