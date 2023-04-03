@@ -341,39 +341,23 @@ end
 
 end
 
-for i = 1:p.Results.freezeFirstFrame
-
-    % If an output directory is provided, save the first frame
-    if ~isempty(p.Results.outdir)
-        print([outdir,'/Frame',num2str(Iter),'.png'],'-dpng')
-    end
-
-    if ~isempty(p.Results.outgif)
-        if i == 1
-        gif(p.Results.outgif,'DelayTime',gifoptions.DelayTime,'DitherOption',gifoptions.DitherOption,'LoopCount',gifoptions.LoopCount,...
-        'frame',gifoptions.frame,'resolution',gifoptions.resolution,'overwrite',gifoptions.overwrite);
-        else
-            gif
-        end
-    end
-
-    Iter = Iter + 1;
-
-end
-
 % Loop through each pair of surface vertices and interpolate between them
 for i = 1:Nsurfaces-1
 
-    for j = 1:F-1
+    for j = 1:F
         % Interpolate between the two sets of vertices
-        newVerts = find_point_on_line(verts{i},verts{i+1},r(j+1));
+        newVerts = find_point_on_line(verts{i},verts{i+1},r(j));
         % Set the surface vertices for the current frame
         surf_patch.Vertices = newVerts;
         % If plotBoundary is true, plot the surface ROI boundary
         if plotBoundary
             % Delete any existing ROI boundary
             delete(b.boundary)
-            % Find the ROI boundaries for the current surface
+            % Find the ROI boundaries for the current surface. The
+            % boundaires are explicitly recalculate each time instead of
+            % just using the interpolation trick above because I am not
+            % sure if the order of the border points is preserved (I think 
+            % it is...) 
             BOUNDARY = findROIboundaries(newVerts,surface.faces,p.Results.vertParc,'midpoint');
             % Plot the ROI boundary
             for jj = 1:length(BOUNDARY)
@@ -385,15 +369,15 @@ for i = 1:Nsurfaces-1
             switch p.Results.cmapInterpType
             case 'RGB'
                 % Do nothing because everything is done
-                current_colormap = find_point_on_line(all_colormaps{i},all_colormaps{i+1},r(j+1));
+                current_colormap = find_point_on_line(all_colormaps{i},all_colormaps{i+1},r(j));
             case 'HSV' 
-                current_colormap = hsv2rgb(find_point_on_line(all_colormaps{i},all_colormaps{i+1},r(j+1)));
+                current_colormap = hsv2rgb(find_point_on_line(all_colormaps{i},all_colormaps{i+1},r(j)));
             end
         end
 
         if vary_vertData
             
-            current_vertData = find_point_on_line(p.Results.vertData{i},p.Results.vertData{i+1},r(j+1));
+            current_vertData = find_point_on_line(p.Results.vertData{i},p.Results.vertData{i+1},r(j));
             if p.Results.varyClimits
                 current_climits = [nanmin(current_vertData) nanmax(current_vertData)];
             else
@@ -414,19 +398,37 @@ for i = 1:Nsurfaces-1
         pause(.1)
         % If an output directory is provided, save the current frame
 
-        if ~(i == Nsurfaces-1 && j == F-1 && p.Results.saveLastFrame)
+        if (i == Nsurfaces-1 && j ~= F) || ((i == Nsurfaces-1 && j == F) && p.Results.saveLastFrame)
 
-        if ~isempty(p.Results.outdir)
-            print([outdir,'/Frame',num2str(Iter),'.png'],'-dpng')
+            if ~isempty(p.Results.outdir)
+                print([outdir,'/Frame',num2str(Iter),'.png'],'-dpng')
+            end
+
+            if ~isempty(p.Results.outgif)
+                if Iter == 1
+                    gif(p.Results.outgif,'DelayTime',gifoptions.DelayTime,'DitherOption',gifoptions.DitherOption,'LoopCount',gifoptions.LoopCount,...
+        'frame',gifoptions.frame,'resolution',gifoptions.resolution,'overwrite',gifoptions.overwrite);
+                else
+                    gif 
+                end
+            end
+            
         end
         
-        if ~isempty(p.Results.outgif)
-           gif 
+        if Iter == 1 && p.Results.freezeFirstFrame > 1
+            for k = 1:p.Results.freezeFirstFrame-1
+                if ~isempty(p.Results.outdir)
+                    print([outdir,'/Frame',num2str(Iter),'.png'],'-dpng')
+                end
+                if ~isempty(p.Results.outgif)
+                   gif 
+                end
+                Iter = Iter + 1;
+            end
+        else
+            % Increment the iteration counter
+            Iter = Iter + 1;
         end
-
-        end
-        % Increment the iteration counter
-        Iter = Iter + 1;
     end
 
 end

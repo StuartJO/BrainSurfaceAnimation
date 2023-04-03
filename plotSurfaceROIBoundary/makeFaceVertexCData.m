@@ -154,17 +154,20 @@ if colorFaceBoundaries == 1
          
             % Scale the data if needed
 
-            face_data(face_data<cmin) = cmin;
-            face_data(face_data>cmax) = cmax;
+            %face_data(face_data<cmin) = cmin;
+            %face_data(face_data>cmax) = cmax;
 
             Ndata = length(face_data);
 
-            face_data(Ndata+1) = cmin;
-            face_data(Ndata+2) = cmax;
+            %face_data(Ndata+1) = cmin;
+            %face_data(Ndata+2) = cmax;
 
             % Map to an index for the colormap
 
-            color_ind = ceil(rescale(face_data,1,size(cmap,1)));
+            %color_ind = ceil(rescale(face_data,1,size(cmap,1)));
+            
+            m = size(cmap,1);
+            color_ind = min(m,round((m-1)*(face_data-cmin)/(cmax-cmin))+1);
 
             % Temporarily assign NaNs (i.e., the value for unknown regions) 
             % to a value so logical indexing doesn't screw up 
@@ -208,15 +211,18 @@ elseif colorFaceBoundaries == 0
     
     end
 
-    vert_data(vert_data<cmin) = cmin;
-    vert_data(vert_data>cmax) = cmax;
+    %vert_data(vert_data<cmin) = cmin;
+    %vert_data(vert_data>cmax) = cmax;
 
     Ndata = length(vert_data);
 
-    vert_data(Ndata+1) = cmin;
-    vert_data(Ndata+2) = cmax;
+    %vert_data(Ndata+1) = cmin;
+    %vert_data(Ndata+2) = cmax;
     
-    color_ind = ceil(rescale(vert_data,1,size(cmap,1)));
+    m = size(cmap,1);
+    color_ind = min(m,round((m-1)*(vert_data-cmin)/(cmax-cmin))+1); 
+    
+    %color_ind = round(rescale(vert_data,1,size(cmap,1)));
 
     % Temporarily assign NaNs (i.e., the value for unknown regions) 
     % to a value so logical indexing doesn't screw up 
