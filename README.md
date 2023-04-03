@@ -1,6 +1,8 @@
 # BrainSurfaceAnimation
 
-This will show how to make an animation of a brain surface mesh morphing in MATLAB. You can morph the vertex positions, the values of each vertex, and/or the colormap being used!
+After years of the number one question being asked at any of my talks being "hoW dO yoU dO tHOsE anIMAtiOns?!??", this is how, this is the answer. My secrets are now yours, so you have no more excuses for boring static PowerPoints :)
+
+This will show how to make an animation of a brain surface mesh morphing in MATLAB. You can morph the vertex positions, the values of each vertex, and/or the colormap being used.
 
 See the header of SurfMorphAnimation.m for full details of all the functionality, and Example.m for examples of how to use it.
 
