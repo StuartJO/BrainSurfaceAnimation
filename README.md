@@ -1,14 +1,14 @@
 # BrainSurfaceAnimation
 
-After years of the number one question being asked at any of my talks being "hoW dO yoU dO tHOsE anIMAtiOns?!??". 
+After years of the number one question being asked at any of my talks being "hoW dO yoU dO tHOsE anIMAtiOns?!??".... 
 
 This is how.
 
-This is the answer. My secrets are now yours, so you have no more excuses for boring static PowerPoints :)
+This is the answer. 
 
-This will show how to make an animation of a brain surface mesh morphing in MATLAB. You can morph the vertex positions, the values of each vertex, and/or the colormap being used.
+My secrets are now yours, so you have no more excuses for boring static PowerPoints :)
 
-See the header of SurfMorphAnimation.m for full details of all the functionality, and Example.m for examples of how to use it.
+This code makes an animation of a brain surface mesh morphing in MATLAB. You can morph the vertex positions, the values of each vertex, and/or the colormap being used. See the header of SurfMorphAnimation.m for full details of all the functionality, and Example.m for examples of how to use it.
 
 The script makes use of plotSurfaceROIBoundary, another toolbox I wrote. I have included it in here for ease of use. I also use the 'gif' function (https://au.mathworks.com/matlabcentral/fileexchange/63239-gif) , and 'export_fig' toolbox (https://github.com/altmany/export_fig).
 
@@ -16,7 +16,9 @@ The example data was obtained from https://gin.g-node.org/kcl_cdb/dhcp_fetal_bra
 
 ## What you need for this code to work
 
-In the simplist case, you just need closed surfaces with vertex correspondance (like say, a mesh of the brains cortex you get from freesurfer ie., white, pial, inflated, sphere; or surfaces of different brains where have been aligned using something like [MSM](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/MSM]). If you have a vector of the ROI ID for each vertex and/or data for each ROI/vertex, further functionality/fun is capable of being done.
+In the simplist case, you just need closed surfaces* (i.e., the surface doesn't have any holes in them) with vertex correspondance (like say, a mesh of the brains cortex you get from freesurfer ie., white, pial, inflated, sphere; or surfaces of different brains where have been aligned using something like [MSM](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/MSM]). If you have a vector of the ROI ID for each vertex and/or data for each ROI/vertex, further functionality/fun is capable of being done.
+
+*<sub>The code would probably still work on a surface mesh that is not enclosed but the boundary plotting functionality stands a high chance of breaking, but luckily you can configure the code to not plot those<sub>
 
 ## Things this code can do
 
