@@ -48,15 +48,15 @@ figure
 SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',10,'vertParc',parc,'vertData',1:N,'plotBoundary',false,'outgif','./outputs/GrowingBrain_parc.gif')
 
 % Plot the brain now with the borders of the parcellation and coloured by
-% sulcal depth at each timepoints
+% sulcal depth at the final timepoint
 figure
-SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',10,'vertParc',parc,'vertData',fetal_sulc{16},'colormap',parula(100),'outgif','./outputs/GrowingBrain_border+sulcAll.gif')
+SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',10,'vertParc',parc,'vertData',fetal_sulc{16},'colormap',parula(100),'outgif','./outputs/GrowingBrain_border+sulc36.gif')
 
 % Plot the brain now with the borders of the parcellation and coloured by
 % sulcal depth at each timepoint (color range is set to the min/max across 
 % all timepoints
 figure
-SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',10,'vertParc',parc,'vertData',fetal_sulc,'colormap',parula(100),'outgif','./outputs/GrowingBrain_border+sulc36.gif')
+SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',10,'vertParc',parc,'vertData',fetal_sulc,'colormap',parula(100),'outgif','./outputs/GrowingBrain_border+sulcAll.gif')
 
 % Plot the brain now with the borders of the parcellation and coloured by
 % sulcal depth at each timepoint (color range is set to the min/max at each 
