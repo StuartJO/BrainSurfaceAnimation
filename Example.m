@@ -72,7 +72,7 @@ SurfMorphAnimation({fetal_verts{16},fetal36_sphere_verts*.4,fetal_verts{16}},fet
 % while morphing from sulcal depth to parcel ID AND changing the colormap! 
 
 figure
-SurfMorphAnimation({fetal_verts{16},fetal36_sphere_verts*.4,fetal_verts{16}},fetal_faces,'NInterpPoints',30,'vertParc',parc,'vertData',{fetal_sulc{16},parc,fetal_sulc{16}},...
+SurfMorphAnimation({fetal_verts{16},fetal36_sphere_verts*.4,fetal_verts{16}},fetal_faces,'NInterpPoints',120,'vertParc',parc,'vertData',{fetal_sulc{16},parc,fetal_sulc{16}},...
 'colormap',{parula(N),turbo(N),parula(N)},'varyClimits',true,'outgif','./outputs/Sphere_inflation_vartCmap_sulc_parc.gif')
 
 % Finally we can create a funky psychedelic looking animation where colours
@@ -112,6 +112,7 @@ trippy_cmap = [99,45,143;...
     0,125,254]./255;
 
 figure
+gifoptions.DelayTime = 1/15;
 SurfMorphAnimation({fetal_verts{16},fetal_verts{16}},fetal_faces,'NInterpPoints',120,'vertParc',parc,'vertData',{vert_dist2randpoints,vert_dist2randpoints2},...
 'colormap',[trippy_cmap;trippy_cmap;trippy_cmap;trippy_cmap],'outgif','./outputs/psychedelic_brain.gif','saveLastFrame',false)
 
