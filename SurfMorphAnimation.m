@@ -61,6 +61,13 @@ function SurfMorphAnimation(verts,faces,varargin)
 %                       the range of vertex data at the current iteration. 
 %                       Default is false. Note this will override 'climits' 
 %
+%       'cmapInterpType' - A character of either 'RGB' or 'HSV', indicates
+%                          the color space in which interpolation takes 
+%                          place. Defaults to 'HSV' (HSV space is used for
+%                          interpolation as it tends to look nicer,
+%                          interpolating in RGB space can make things look
+%                          a yucky grey at times)
+%
 %       'outdir' - The directory to save the PNG images of the animation 
 %                  frames to. If empty, frames will not be saved to disk. 
 %                  Default is empty.
@@ -79,6 +86,11 @@ function SurfMorphAnimation(verts,faces,varargin)
 %                           'frame', gcf,...
 %                           'resolution', 0,...
 %                           'overwrite',true);
+%
+%       'saveLastFrame' - a logical indicating whether to save the last
+%                         frame. Default is true If trying to create a
+%                         perfect loop, this should be set to false.
+%                         
 % 
 %   Returns:
 %
@@ -105,7 +117,7 @@ validFaces = @(x) ismatrix(x);
 validScalarPosNum = @(x) isnumeric(x) && isscalar(x) && (x > 0);
 validMatrix = @(x) isnumeric(x) && ismatrix(x) && (size(x,1) == 1 || size(x,2) == 1);
 validLogical = @(x) islogical(x);
-validCmap = @(x) isnumeric(x) && size(x,2) == 3;
+validCmap = @(x) (isnumeric(x) && size(x,2) == 3) || iscell(x);
 validAngle = @(x) isnumeric(x) && size(x,1) == 1 && size(x,2) == 2;
 validCamlights = @(x) isnumeric(x) && size(x,2) == 2;
 
@@ -145,6 +157,8 @@ addOptional(p,'outgif',[],@ischar);
 addOptional(p,'gifoptions',default_gifoptions,@isstruct);
 addOptional(p,'climits',[],validAngle);
 addOptional(p,'varyClimits',false,validLogical);
+addOptional(p,'saveLastFrame',true,validLogical);
+addOptional(p,'cmapInterpType','HSV',@ischar);
 
 % Parse the inputs
 parse(p,verts,faces,varargin{:})
@@ -180,17 +194,17 @@ end
 
 %% Check if the vertex data is morphing as well
 
-Ntimepoints = length(verts);
+Nsurfaces = length(verts);
 
 vertData = p.Results.vertData;
 if iscell(p.Results.vertData)
-    if length(p.Results.vertData) ~= Ntimepoints
+    if length(p.Results.vertData) ~= Nsurfaces
         error('if ''vertData'' is a cell, it must be the same length as ''verts''')
     end
     % Get the climits
     if isempty(p.Results.climits) 
-        climits_ = zeros(Ntimepoints,2);
-        for i = 1:Ntimepoints
+        climits_ = zeros(Nsurfaces,2);
+        for i = 1:Nsurfaces
             climits_(i,:) = [nanmin(vertData{i}), nanmax(vertData{i})];
         end
         climits = [nanmin(climits_(:,1)), nanmax(climits_(:,1))];
@@ -212,10 +226,31 @@ end
 % Avoid climits having a nan in them
 climits(isnan(climits)) = 0;
 
-%% Actually make the animation
+% Format the colormaps
 
-% Get the number of surfaces
-Nsurfaces = length(verts);
+if iscell(p.Results.colormap)
+    if length(p.Results.colormap) ~= Nsurfaces
+        error('if ''colormap'' is a cell, it must be the same length as ''verts''')
+    end
+      all_colormaps = p.Results.colormap;
+        switch p.Results.cmapInterpType
+            case 'RGB'
+                % Do nothing because everything is done
+            case 'HSV' 
+                for i = 1:Nsurfaces
+                    all_colormaps{i} = rgb2hsv(p.Results.colormap{i});
+                end
+        end
+
+    current_colormap = p.Results.colormap{1};
+    varyCmap = true;
+else
+
+    current_colormap = p.Results.colormap;
+    varyCmap = false;
+end
+
+%% Actually make the animation
 
 % Create a surface structure
 surface.vertices = verts{Nsurfaces};
@@ -247,11 +282,11 @@ current_climits(isnan(current_climits)) = 0;
 % plot the surface without the boundary
 if ~p.Results.plotBoundary || length(unique(p.Results.vertParc)) == 1
     plotBoundary = false;
-    [surf_patch,b] = plotSurfaceROIBoundary(surface,vertParc,current_vertData,'none',p.Results.colormap,1,current_climits);
+    [surf_patch,b] = plotSurfaceROIBoundary(surface,vertParc,current_vertData,'none',current_colormap,1,current_climits);
    
 % Otherwise, plot the surface with the boundary
 else
-    [surf_patch,b] = plotSurfaceROIBoundary(surface,vertParc,current_vertData,'midpoint',p.Results.colormap,p.Results.boundaryWidth,current_climits);  
+    [surf_patch,b] = plotSurfaceROIBoundary(surface,vertParc,current_vertData,'midpoint',current_colormap,p.Results.boundaryWidth,current_climits);  
 end
 
 % Add two camlights to the plot and set the view angle, axis properties
@@ -313,7 +348,7 @@ end
 Iter = 2;
 
 % Loop through each pair of surface vertices and interpolate between them
-for i = 1:length(verts)-1
+for i = 1:Nsurfaces-1
 
     for j = 1:F-1
         % Interpolate between the two sets of vertices
@@ -332,6 +367,16 @@ for i = 1:length(verts)-1
             end
         end
         
+        if varyCmap
+            switch p.Results.cmapInterpType
+            case 'RGB'
+                % Do nothing because everything is done
+                current_colormap = find_point_on_line(all_colormaps{i},all_colormaps{i+1},r(j+1));
+            case 'HSV' 
+                current_colormap = hsv2rgb(find_point_on_line(all_colormaps{i},all_colormaps{i+1},r(j+1)));
+            end
+        end
+
         if vary_vertData
             
             current_vertData = find_point_on_line(p.Results.vertData{i},p.Results.vertData{i+1},r(j+1));
@@ -343,22 +388,28 @@ for i = 1:length(verts)-1
 
             % Avoid cases of climits having a nan in them
             current_climits(isnan(current_climits)) = 0;
-            
-            FaceVertexCData = makeFaceVertexCData(newVerts,surface.faces,vertParc,current_vertData,p.Results.colormap,current_climits,0);
-            surf_patch.FaceVertexCData = FaceVertexCData;
-        
+                   
         end
-        
+
+        if vary_vertData || varyCmap
+            FaceVertexCData = makeFaceVertexCData(newVerts,surface.faces,vertParc,current_vertData,current_colormap,current_climits,0);
+            surf_patch.FaceVertexCData = FaceVertexCData;
+        end
         % Pause for a short time to ensure that the frame is generated so
         % it can be appropriately saved
         pause(.1)
         % If an output directory is provided, save the current frame
+
+        if ~(i == Nsurfaces-1 && j == F-1 && p.Results.saveLastFrame)
+
         if ~isempty(p.Results.outdir)
             print([outdir,'/Frame',num2str(Iter),'.png'],'-dpng')
         end
         
         if ~isempty(p.Results.outgif)
            gif 
+        end
+
         end
         % Increment the iteration counter
         Iter = Iter + 1;
