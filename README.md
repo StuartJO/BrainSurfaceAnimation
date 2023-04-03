@@ -13,39 +13,39 @@ The example data was obtained from https://gin.g-node.org/kcl_cdb/dhcp_fetal_bra
 So many pointless things!
 
 To start with we can just animate the brain growing from 21 weeks gestational age to 36 weeks
-![/outputs/GrowingBrain.gif]
+![](/outputs/GrowingBrain.gif)
 
 We can also plot the borders of a parcellaiton on this growing brain!
 
-![/outputs/GrowingBrain_border.gif]
+![](/outputs/GrowingBrain_border.gif)
 
 We can *colour* the growing brain!
 
-![/outputs/GrowingBrain_parc+border.gif]
+![](/outputs/GrowingBrain_parc+border.gif)
 
 We can colour without the borders!
 
-![/outputs/GrowingBrain_parc.gif]
+![](/outputs/GrowingBrain_parc.gif)
 
 We can also plot some other feature, like sulcal depth on the surface, showing "absolute" changes in this property...
 
-![/outputs/GrowingBrain_border+sulcAll.gif]
+![](/outputs/GrowingBrain_border+sulcAll.gif)
 
 Showing relative changes in this property 
 
-![/outputs/GrowingBrain_border+sulcAll2.gif]
+![](/outputs/GrowingBrain_border+sulcAll2.gif)
 
 Or we can just plot the sulcal depth at 36 weeks on to all timepoints and watch them gyri form!
 
-![outputs/GrowingBrain_border+sulc36.gif]
+![](outputs/GrowingBrain_border+sulc36.gif)
 
 We can also morph between a brain surface and its spherical projection
 
-![outputs/Sphere_inflation.gif]
+![](outputs/Sphere_inflation.gif)
 
 For more fun, we can show the surface inflation to a sphere and back again, while morphing from sulcal depth to parcel ID AND changing the colormap at the the same type 
 
-![outputs/Sphere_inflation_vartCmap_sulc_parc.gif]
+![](outputs/Sphere_inflation_vartCmap_sulc_parc.gif)
 
 ## To gif or not to gif, that is the question
 
