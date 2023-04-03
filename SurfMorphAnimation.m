@@ -86,11 +86,21 @@ function SurfMorphAnimation(verts,faces,varargin)
 %                           'frame', gcf,...
 %                           'resolution', 0,...
 %                           'overwrite',true);
+%       'freezeFirstFrame' - an integer >= 1, which indicates how many
+%                            times to 'freeze' the first frame of the 
+%                            animation. Useful for pausing on the initial
+%                            frame. Default is 1
+%
+%       'freezeLastFrame' - an integer >= 1, which indicates how many times
+%                            to 'freeze' the last frame of the animation.
+%                            Useful for pausing on the final frame. Default
+%                            is 1
 %
 %       'saveLastFrame' - a logical indicating whether to save the last
-%                         frame. Default is true If trying to create a
-%                         perfect loop, this should be set to false.
-%                         
+%                         frame. If trying to create a perfect loop, this
+%                         this should be set to false. Note this will
+%                         override 'freezeLastFrame' if it is set. Default
+%                          is true. 
 % 
 %   Returns:
 %
@@ -120,7 +130,7 @@ validLogical = @(x) islogical(x);
 validCmap = @(x) (isnumeric(x) && size(x,2) == 3) || iscell(x);
 validAngle = @(x) isnumeric(x) && size(x,1) == 1 && size(x,2) == 2;
 validCamlights = @(x) isnumeric(x) && size(x,2) == 2;
-
+validFreezeFrame = @(x) isnumeric(x) && isscalar(x) && isinteger(x) && (x >= 1);
 validMatOrCell = @(x) (isnumeric(x) && ismatrix(x) && (size(x,1) == 1 || size(x,2) == 1)) || iscell(x);
 
 % Get the number of vertices in the first surface
@@ -128,11 +138,12 @@ Nverts = size(verts{1},1);
 
 % Set default values for optional input arguments
 default_Cmap = turbo(256);
-default_vertData = zeros(Nverts,1);
+default_vertData = nan(Nverts,1);
 default_vertParc = ones(Nverts,1);
 default_NInterpPoints = 30;
 default_viewAngle = [-90 0];
 default_camlights = [80,-10;-80,-10];
+
 
 default_gifoptions = struct('DelayTime', 1/30,...
                     'DitherOption', 'nodither',...
@@ -159,6 +170,9 @@ addOptional(p,'climits',[],validAngle);
 addOptional(p,'varyClimits',false,validLogical);
 addOptional(p,'saveLastFrame',true,validLogical);
 addOptional(p,'cmapInterpType','HSV',@ischar);
+addOptional(p,'freezeFirstFrame',1,validFreezeFrame);
+addOptional(p,'freezeLastFrame',1,validFreezeFrame);
+
 
 % Parse the inputs
 parse(p,verts,faces,varargin{:})
@@ -207,7 +221,7 @@ if iscell(p.Results.vertData)
         for i = 1:Nsurfaces
             climits_(i,:) = [nanmin(vertData{i}), nanmax(vertData{i})];
         end
-        climits = [nanmin(climits_(:,1)), nanmax(climits_(:,1))];
+        climits = [nanmin(climits_(:,1)), nanmax(climits_(:,2))];
     else
        climits = p.Results.climits;
     end
@@ -260,21 +274,14 @@ surface.faces = faces;
 % parcellation values
 plotBoundary = p.Results.plotBoundary;
 
-% If there is no data to ever actually ever plot, just configure it so the
-% colour of the surface will default to grey (occurs when all vertices are
-% assigned to an unknwon region i.e., 0)
-if min(climits) == 0 && max(climits) == 0
-    vertParc = zeros(Nverts,1);
-else
-    vertParc = p.Results.vertParc;
-end
-
 % Get the climits to use
 if p.Results.varyClimits
     current_climits = [nanmin(current_vertData) nanmax(current_vertData)];
 else
     current_climits = climits;
 end
+
+vertParc = p.Results.vertParc;
 
 current_climits(isnan(current_climits)) = 0;
 
@@ -334,18 +341,25 @@ end
 
 end
 
-% If an output directory is provided, save the first frame
-if ~isempty(p.Results.outdir)
-    print([outdir,'/Frame',num2str(Iter),'.png'],'-dpng')
-end
+for i = 1:p.Results.freezeFirstFrame
 
-if ~isempty(p.Results.outgif)
-    gif(p.Results.outgif,'DelayTime',gifoptions.DelayTime,'DitherOption',gifoptions.DitherOption,'LoopCount',gifoptions.LoopCount,...
-    'frame',gifoptions.frame,'resolution',gifoptions.resolution,'overwrite',gifoptions.overwrite);
-end
+    % If an output directory is provided, save the first frame
+    if ~isempty(p.Results.outdir)
+        print([outdir,'/Frame',num2str(Iter),'.png'],'-dpng')
+    end
 
-% Set the iteration counter to 2, since we've already created the first frame
-Iter = 2;
+    if ~isempty(p.Results.outgif)
+        if i == 1
+        gif(p.Results.outgif,'DelayTime',gifoptions.DelayTime,'DitherOption',gifoptions.DitherOption,'LoopCount',gifoptions.LoopCount,...
+        'frame',gifoptions.frame,'resolution',gifoptions.resolution,'overwrite',gifoptions.overwrite);
+        else
+            gif
+        end
+    end
+
+    Iter = Iter + 1;
+
+end
 
 % Loop through each pair of surface vertices and interpolate between them
 for i = 1:Nsurfaces-1
@@ -415,4 +429,19 @@ for i = 1:Nsurfaces-1
         Iter = Iter + 1;
     end
 
+end
+
+% Freeze the last frame if needed
+if  p.Results.freezeLastFrame > 1 && p.Results.saveLastFrame
+    for i = 1:p.Results.FreezeFirstFrame-1
+        if ~isempty(p.Results.outdir)
+            print([outdir,'/Frame',num2str(Iter),'.png'],'-dpng')
+        end
+        
+        if ~isempty(p.Results.outgif)
+           gif 
+        end 
+        % Increment the iteration counter
+        Iter = Iter + 1;
+    end   
 end
