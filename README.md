@@ -64,7 +64,7 @@ To save the output, the code gives two options: directly save to a .gif file and
 
 The choice is yours.
 
-## This this cannot do
+## Things this cannot do
 
 The main one is it cannot morph between the boundaries of parcellations (it can do it if you only want to use the colours, if you are ok with it looking a little strange). It is conceptually the same as morphing the vertices/vertex data/colormap, I just didn't get around to doing it because it is a very niche thing to try to do (and making the morphing animations is *already* a very niche thing to do). Perhaps one day...
 
