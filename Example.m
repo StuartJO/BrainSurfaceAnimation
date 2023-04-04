@@ -64,6 +64,16 @@ SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',10,'vertParc',parc,'v
 figure
 SurfMorphAnimation(fetal_verts,fetal_faces,'NInterpPoints',10,'vertParc',parc,'vertData',fetal_sulc,'varyClimits',true,'colormap',parula(100),'outgif','./outputs/GrowingBrain_border+sulcAll2.gif')
 
+% Plot the brain on an inflated surface, and show the changes in sulcal
+% depth across the time points on it
+figure
+% For this to work, need to repeat the vertices
+fetal_verts_inflated_ = cell(1,length(fetal_sulc));
+for i = 1:length(fetal_sulc)
+fetal_verts_inflated_{i} = fetal_verts_inflated{length(fetal_sulc)};
+end
+SurfMorphAnimation(fetal_verts_inflated_,fetal_faces,'NInterpPoints',10,'freezeLastFrame',15,'vertData',fetal_sulc,'colormap',parula(100),'outgif','./outputs/StaticBrain_border+sulcAll.gif')
+
 % For fun, show the surface inflation to a sphere and back again
 figure
 SurfMorphAnimation({fetal_verts{16},fetal36_sphere_verts*.4,fetal_verts{16}},fetal_faces,'NInterpPoints',90,'vertParc',parc,'vertData',parc,'outgif','./outputs/Sphere_inflation.gif')
@@ -117,7 +127,3 @@ trippy_cmap = [99,45,143;...
 figure
 SurfMorphAnimation({fetal_verts{16},fetal_verts{16}},fetal_faces,'NInterpPoints',119,'vertParc',parc,'vertData',{vert_dist2randpoints,vert_dist2randpoints2},...
 'colormap',[trippy_cmap;trippy_cmap;trippy_cmap;trippy_cmap],'outgif','./outputs/psychedelic_brain.gif','saveLastFrame',false)
-
-
-
-

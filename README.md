@@ -12,7 +12,7 @@ This code makes an animation of a brain surface mesh morphing in MATLAB. You can
 
 The script makes use of plotSurfaceROIBoundary, another toolbox I wrote. I have included it in here for ease of use. I also use the 'gif' function (https://au.mathworks.com/matlabcentral/fileexchange/63239-gif) , and 'export_fig' toolbox (https://github.com/altmany/export_fig).
 
-The example data was obtained from https://gin.g-node.org/kcl_cdb/dhcp_fetal_brain_surface_atlas
+The example data was obtained from https://gin.g-node.org/kcl_cdb/dhcp_fetal_brain_surface_atlas. The surface vertex data is from the pial surface
 
 ## What you need for this code to work
 
@@ -48,11 +48,15 @@ Showing "relative" changes in this property (i.e., normalised tminimum and maxim
 
 ![](/outputs/GrowingBrain_border+sulcAll2.gif)
 
-Or we can just plot the sulcal depth at 36 weeks on to all timepoints and watch them gyri form!
+Or we can just plot the sulcal depth at 36 weeks on to all timepoints and see where all the folds will form!
 
 ![](outputs/GrowingBrain_border+sulc36.gif)
 
-We can also morph between a brain surface and its spherical projection
+We can also just plot a single surface, and then visualise the changes in sulcal depth on that
+
+![](outputs/StaticBrain_border+sulcAll.gif)
+
+For fun, we can morph between a brain surface and its spherical projection
 
 ![](outputs/Sphere_inflation.gif)
 

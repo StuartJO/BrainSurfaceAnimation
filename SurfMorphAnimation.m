@@ -11,9 +11,11 @@ function SurfMorphAnimation(verts,faces,varargin)
 %           Each element of the cell array should be an Nx3 matrix of 
 %           vertices, where N is the number of vertices in the surface.
 %
-%   faces - A matrix representing the faces of the surface(s). This should
-%           be an Mx3 matrix where each row contains the indices of the 
-%           three vertices which make up a triangular face of the surface.
+%   faces - A matrix representing the faces of the surfaces. This should be
+%           an Mx3 matrix where each row contains the indices of the three
+%           vertices which make up a triangular face of the surface. These
+%           faces should apply to all the vertices in verts (as to ensure
+%           vertex correspondance)
 %
 %   varargin - Optional arguments which can be used to customize the 
 %              animation. These can include the following:
@@ -30,8 +32,10 @@ function SurfMorphAnimation(verts,faces,varargin)
 %
 %       'vertData' - A matrix of data values associated with each vertex of 
 %                    the surface(s), which can be used to color the 
-%                    vertices in the animation. Default is a matrix of 
-%                    zeros.
+%                    vertices in the animation. Can also be a cell array
+%                    containing a matrix of data values associated with 
+%                    each vertex of the surface(s). Default is a matrix of       
+%                    zeros (i.e., no data to plot).
 %
 %       'vertParc' - A matrix of integers indicating which region or parcel 
 %                    each vertex of the surface(s) belongs to. This can be 
@@ -40,7 +44,9 @@ function SurfMorphAnimation(verts,faces,varargin)
 %                    ones.
 %
 %       'colormap' - A colormap to use for coloring the vertices based on 
-%                    their data values. Default is the 'turbo' colormap.
+%                    their data values. Can also input a cell array 
+%                    containing colormaps to use with each surface. Default 
+%                    is the 'turbo' colormap.
 %
 %       'viewAngle' - A 1x2 vector specifying the azimuth and elevation 
 %                     angles of the camera used to view the surface(s) in 
@@ -53,6 +59,13 @@ function SurfMorphAnimation(verts,faces,varargin)
 %                     The camera target is the center of rotation and
 %                     azimuth and elevation are in degrees. By default
 %                     positons two lights at [80,-10] and [-80,-10]
+%
+%       'axislimits' - An 3x2 matrix, where each row indicates the limits
+%                      for a particular axis (1st row is x-axis, 2nd is the 
+%                      y-axis, 3rd is the z-axis). This limits are applied 
+%                      to all surfaces. By default, the axis limits MATLAB
+%                      automatically determines for the first surface will
+%                      be used
 %
 %       'climits' - A 1x2 vector [min, max] of colormap limits. By default
 %                   this will set to the min and max values of 'vertData'
@@ -123,18 +136,28 @@ p = inputParser;
 
 % Define custom validation functions for the inputs
 validCell = @(x) iscell(x);
-validFaces = @(x) ismatrix(x);
+validFaces = @(x) ismatrix(x) && all(all(x>0)) && all(all(mod(x,1)==0));
 validScalarPosNum = @(x) isnumeric(x) && isscalar(x) && (x > 0);
 validMatrix = @(x) isnumeric(x) && ismatrix(x) && (size(x,1) == 1 || size(x,2) == 1);
 validLogical = @(x) islogical(x);
 validCmap = @(x) (isnumeric(x) && size(x,2) == 3) || iscell(x);
 validAngle = @(x) isnumeric(x) && size(x,1) == 1 && size(x,2) == 2;
 validCamlights = @(x) isnumeric(x) && size(x,2) == 2;
-validFreezeFrame = @(x) isnumeric(x) && isscalar(x) && isinteger(x) && (x >= 1);
+validFreezeFrame = @(x) isnumeric(x) && isscalar(x) && mod(x,1) == 0 && (x >= 1);
 validMatOrCell = @(x) (isnumeric(x) && ismatrix(x) && (size(x,1) == 1 || size(x,2) == 1)) || iscell(x);
+validAxislimits = @(x) isnumeric(x) && ismatrix(x) && (size(x,1) == 3 || size(x,2) == 2);
 
 % Get the number of vertices in the first surface
 Nverts = size(verts{1},1);
+Nsurfaces = length(verts);
+% Check all the surface vertices to see if they are correctly formatted
+
+for i = 1:Nsurfaces
+    % Check if the container is a N-by-3 matrix
+    if ~(isnumeric(verts{i}) && size(verts{i},2) == 3 && size(verts{i},1) == Nverts)
+        error('verts{%d} has a different format than verts{1}; all surfaces need the same number of vertices!', i);
+    end
+end
 
 % Set default values for optional input arguments
 default_Cmap = turbo(256);
@@ -143,7 +166,6 @@ default_vertParc = ones(Nverts,1);
 default_NInterpPoints = 30;
 default_viewAngle = [-90 0];
 default_camlights = [80,-10;-80,-10];
-
 
 default_gifoptions = struct('DelayTime', 1/30,...
                     'DitherOption', 'nodither',...
@@ -172,7 +194,7 @@ addOptional(p,'saveLastFrame',true,validLogical);
 addOptional(p,'cmapInterpType','HSV',@ischar);
 addOptional(p,'freezeFirstFrame',1,validFreezeFrame);
 addOptional(p,'freezeLastFrame',1,validFreezeFrame);
-
+addOptional(p,'axislimits',[],validAxislimits);
 
 % Parse the inputs
 parse(p,verts,faces,varargin{:})
@@ -207,8 +229,6 @@ if ~isfield(gifoptions, 'overwrite')
 end
 
 %% Check if the vertex data is morphing as well
-
-Nsurfaces = length(verts);
 
 vertData = p.Results.vertData;
 if iscell(p.Results.vertData)
@@ -307,6 +327,12 @@ axis vis3d
 axis tight
 axis equal
 
+if ~isempty(p.Results.axislimits)
+    xlim(p.Results.axislimits(1,:))
+    ylim(p.Results.axislimits(2,:))
+    zlim(p.Results.axislimits(3,:))
+end
+
 % Freeze the axis limits
 xlim manual
 ylim manual
@@ -397,8 +423,9 @@ for i = 1:Nsurfaces-1
         % it can be appropriately saved
         pause(.1)
         % If an output directory is provided, save the current frame
-
-        if (i == Nsurfaces-1 && j ~= F) || ((i == Nsurfaces-1 && j == F) && p.Results.saveLastFrame)
+        % This check if it is not the final frame. If it is the final
+        % frame, further checks if the final frame should be saved
+        if ~(i == Nsurfaces-1 && j == F) || ((i == Nsurfaces-1 && j == F) && p.Results.saveLastFrame)
 
             if ~isempty(p.Results.outdir)
                 print([outdir,'/Frame',num2str(Iter),'.png'],'-dpng')
@@ -435,7 +462,7 @@ end
 
 % Freeze the last frame if needed
 if  p.Results.freezeLastFrame > 1 && p.Results.saveLastFrame
-    for i = 1:p.Results.FreezeFirstFrame-1
+    for i = 1:p.Results.freezeLastFrame-1
         if ~isempty(p.Results.outdir)
             print([outdir,'/Frame',num2str(Iter),'.png'],'-dpng')
         end
