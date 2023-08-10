@@ -4,19 +4,21 @@ After years of the number one question being asked at any of my talks being "hoW
 
 This is how.
 
-This is the answer. 
+This is the answer.* 
 
 My secrets are now yours, so you have no more excuses for boring static PowerPoints :)
 
 This code makes an animation of a brain surface mesh morphing in MATLAB. You can morph the vertex positions, the values of each vertex, and/or the colormap being used. See the header of SurfMorphAnimation.m for full details of all the functionality, and Example.m for examples of how to use it.
 
-The script makes use of plotSurfaceROIBoundary, another toolbox I wrote. I have included it in here for ease of use. I also use the 'gif' function (https://au.mathworks.com/matlabcentral/fileexchange/63239-gif) , and 'export_fig' toolbox (https://github.com/altmany/export_fig).
+The script makes use of plotSurfaceROIBoundary, another toolbox I wrote. I have included it here for ease of use. I also use the 'gif' function (https://au.mathworks.com/matlabcentral/fileexchange/63239-gif), and 'export_fig' toolbox (https://github.com/altmany/export_fig).
 
 The example data was obtained from https://gin.g-node.org/kcl_cdb/dhcp_fetal_brain_surface_atlas. The surface vertex data is from the pial surface
 
+*<sub>ACtually this is not the full answer. Go look up the "morph" transition in PowerPoint. No coding required for that!<sub>
+
 ## What you need for this code to work
 
-In the simplist case, you just need closed surfaces* (i.e., the surface doesn't have any holes in them) with vertex correspondance (like say, a mesh of the brains cortex you get from freesurfer ie., white, pial, inflated, sphere; or surfaces of different brains where have been aligned using something like [MSM](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/MSM]). If you have a vector of the ROI ID for each vertex and/or data for each ROI/vertex, further functionality/fun is capable of being done.
+In the simplist case, you just need closed surfaces* (i.e., the surface doesn't have any holes in them) with vertex correspondence (like say, a mesh of the brains cortex you get from freesurfer ie., white, pial, inflated, sphere; or surfaces of different brains where have been aligned using something like [MSM](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/MSM]). If you have a vector of the ROI ID for each vertex and/or data for each ROI/vertex, further functionality/fun is capable of being done.
 
 *<sub>The code would probably still work on a surface mesh that is not enclosed but the boundary plotting functionality stands a high chance of breaking, but luckily you can configure the code to not plot those<sub>
 
@@ -28,7 +30,7 @@ To start with we can just animate the brain growing from 21 weeks gestational ag
 
 ![](/outputs/GrowingBrain.gif)
 
-We can also plot the borders of a parcellaiton on this growing brain!
+We can also plot the borders of a parcellation on this growing brain!
 
 ![](/outputs/GrowingBrain_border.gif)
 
@@ -48,7 +50,7 @@ Showing "relative" changes in this property (i.e., normalised minimum and maximu
 
 ![](/outputs/GrowingBrain_border+sulcAll2.gif)
 
-Or we can just plot the sulcal depth at 36 weeks on to all timepoints and see where all the folds will form!
+Or we can just plot the sulcal depth at 36 weeks onto all timepoints and see where all the folds will form!
 
 ![](outputs/GrowingBrain_border+sulc36.gif)
 
@@ -60,7 +62,7 @@ For fun, we can morph between a brain surface and its spherical projection
 
 ![](outputs/Sphere_inflation.gif)
 
-For more fun, we can show the surface inflation to a sphere and back again, while morphing from sulcal depth to parcel ID AND changing the colormap at the the same type 
+For more fun, we can show the surface inflation to a sphere and back again, while morphing from sulcal depth to parcel ID AND changing the colormap at the same time 
 
 ![](outputs/Sphere_inflation_vartCmap_sulc_parc.gif)
 
@@ -76,7 +78,7 @@ The parcellation that I used for these plots can be found in Parc4plots.mat
 
 ## To gif or not to gif, that is the question
 
-To save the output, the code gives two options: directly save to a .gif file and/or save each frame as a .png. Why these two options? The .gif option is easier and will give you an animation you can use right out of the box. However, I have personally found that the way MATLAB makes gifs is less than ideal and can result in poor quality. I found external gif making tools (like Photoscape X or https://ezgif.com/maker) could give better results, and can give you a lot more control (for example, you can vary the timing of individual frames which can be very useful). To use these external tools, you need to provide the frames to use (i.e., the .png files, also not you can import a .gif made from MATLAB into the to fiddle with setting but you run the risk of further compression artefacts occuring then). The other benefit of .png files is you can import them into your video maker of choice (e.g., Windows video Editor, Hitfilm Express) and make a video out of them. This will preserve the quality of each frame a lot better than simply making a gif. 
+To save the output, the code gives two options: directly save to a .gif file and/or save each frame as a .png. Why these two options? The .gif option is easier and will give you an animation you can use right out of the box. However, I have personally found that the way MATLAB makes gifs is less than ideal and can result in poor quality. I found external gif making tools (like Photoscape X or https://ezgif.com/maker) could give better results, and can give you a lot more control (for example, you can vary the timing of individual frames which can be very useful). To use these external tools, you need to provide the frames to use (i.e., the .png files, also not you can import a .gif made from MATLAB into the to fiddle with setting but you run the risk of further compression artefacts occurring then). The other benefit of .png files is you can import them into your video maker of choice (e.g., Windows video Editor, Hitfilm Express) and make a video out of them. This will preserve the quality of each frame a lot better than simply making a gif. 
 
 The choice is yours.
 
