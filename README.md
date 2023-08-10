@@ -44,7 +44,7 @@ We can also plot some other feature, like sulcal depth on the surface, showing "
 
 ![](/outputs/GrowingBrain_border+sulcAll.gif)
 
-Showing "relative" changes in this property (i.e., normalised tminimum and maximum value at the current timepoint/surface). 
+Showing "relative" changes in this property (i.e., normalised minimum and maximum value at the current timepoint/surface). 
 
 ![](/outputs/GrowingBrain_border+sulcAll2.gif)
 
