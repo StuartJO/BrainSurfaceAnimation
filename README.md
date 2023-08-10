@@ -64,9 +64,13 @@ For more fun, we can show the surface inflation to a sphere and back again, whil
 
 ![](outputs/Sphere_inflation_vartCmap_sulc_parc.gif)
 
-Finally, we can have a rave on the brain
+We can have a rave on the brain
 
 ![](/outputs/psychedelic_brain.gif)
+
+Finally, we can have a rave on the brain as it grows to a sphere!
+
+![](/outputs/psychedelic_brain_sphere.gif)
 
 The parcellation that I used for these plots can be found in Parc4plots.mat
 

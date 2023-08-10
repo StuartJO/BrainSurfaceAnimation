@@ -127,3 +127,10 @@ trippy_cmap = [99,45,143;...
 figure
 SurfMorphAnimation({fetal_verts{16},fetal_verts{16}},fetal_faces,'NInterpPoints',119,'vertParc',parc,'vertData',{vert_dist2randpoints,vert_dist2randpoints2},...
 'colormap',[trippy_cmap;trippy_cmap;trippy_cmap;trippy_cmap],'outgif','./outputs/psychedelic_brain.gif','saveLastFrame',false)
+
+% Lets go for broke and have it expand to a sphere as well
+
+figure
+vert_dist2randpoints3 = vert_dist2randpoints2+16;
+SurfMorphAnimation({fetal_verts{16},fetal36_sphere_verts*.4,fetal_verts{16}},fetal_faces,'NInterpPoints',119,'vertParc',parc,'vertData',{vert_dist2randpoints,vert_dist2randpoints2,vert_dist2randpoints3},...
+'colormap',[trippy_cmap;trippy_cmap;trippy_cmap;trippy_cmap;trippy_cmap;trippy_cmap],'outgif','./outputs/psychedelic_brain_sphere.gif','saveLastFrame',false)

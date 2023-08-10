@@ -109,7 +109,7 @@ switch boundary_method
     % to be found
     [edges_sorted,edges_sorted_ind] = sortrows(sort(edges,2));
 
-    clear edges
+    %clear edges
 
     % Extract all of the edges metadata into one matrix. 
     % edges_metadata(:,1:2) are the IDs of the vertices making up that
@@ -121,7 +121,7 @@ switch boundary_method
     edges_metadata = [edges_sorted  vertex_id(edges_sorted) edge_color(edges_sorted_ind,:) edge_faceID(edges_sorted_ind,:) boundary_faces(edge_faceID(edges_sorted_ind,:))];
 
     % Clean up some large matrices/arrays
-    clear edges_sorted edge_faceID edge_color
+    %clear edges_sorted edge_faceID edge_color
 
     % Get the unique data for each edge. Each edge is assigned to 
     % two faces so will appear twice in this list
@@ -143,7 +143,7 @@ switch boundary_method
 
     unique_edges_metadata = [edges_unique1(:,1:4) double((edges_unique1(:,5)-edges_unique2(:,5))~=0) edges_unique1(:,6) edges_unique2(:,6) max(edges_unique1(:,7),edges_unique2(:,7))];
     
-    clear edges_unqiue edges_unique1 edges_unique2 
+    %clear edges_unqiue edges_unique1 edges_unique2 
     
     switch boundary_method
     
@@ -181,7 +181,7 @@ switch boundary_method
     nBounds = 1;
     
     ROI_COMPONENTS = zeros(nrois,1);
-
+    %save('errors1.mat')
     for i = 1:nrois
         
         % Find the boundary edges for a given roi
@@ -380,9 +380,9 @@ switch boundary_method
                 % point to insert the coordinate
                 %corner_coords2use_ind = find(diff(boundary_corner_points)==1);
 
-                corner_coords2use_insert = boundary_corner_points;
+                corner_coords_insert = boundary_corner_points;
                 
-                corner_coords2use = corner_coords(corner_coords2use_insert,:);
+                corner_coords2use = corner_coords(corner_coords_insert,:);
                 
                 % Create the matrix defining the final number of boundary
                 % coordinates
