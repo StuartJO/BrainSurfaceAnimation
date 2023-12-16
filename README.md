@@ -14,7 +14,7 @@ The script makes use of plotSurfaceROIBoundary, another toolbox I wrote. I have 
 
 The example data was obtained from https://gin.g-node.org/kcl_cdb/dhcp_fetal_brain_surface_atlas. The surface vertex data is from the pial surface
 
-*<sub>ACtually this is not the full answer. Go look up the "morph" transition in PowerPoint. No coding required for that!<sub>
+*<sub>Actually this is not the full answer. Go look up the "morph" transition in PowerPoint. No coding required for that!<sub>
 
 ## What you need for this code to work
 
